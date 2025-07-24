@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ElevenLabs Self-Improving Agent</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🎙️ Self-Improving Agent</h1>
+        <p class="subtitle">Voice AI that learns from every conversation</p>
+        
+        <div class="status-section">
+            <div class="status-item">
+                <span class="status-label">Connection:</span>
+                <span id="connectionStatus" class="status-value status-disconnected">Disconnected</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Agent:</span>
+                <span id="agentStatus" class="status-value status-listening">Ready</span>
+            </div>
+        </div>
+
+        <div class="button-section">
+            <button id="conversationButton">Start Conversation</button>
+        </div>
+
+        <div class="version-info">
+            <div class="version-title">Current Agent Version</div>
+            <div class="version-details" id="versionDetails">
+                Version 1.0 - Initial agent configuration
+            </div>
+            <div class="conversation-count" id="conversationCount">
+                Conversations completed: 0
+            </div>
+        </div>
+
+        <div class="debug-info">
+            <div class="debug-title">Debug Commands</div>
+            <div class="debug-details">
+                Open browser console and try:
+                <ul>
+                    <li><code>debugAgent.showEvolvedPrompt()</code> - View current prompt</li>
+                    <li><code>debugAgent.getPromptStats()</code> - View prompt statistics</li>
+                    <li><code>debugAgent.clearEvolvedPrompt()</code> - Reset to base agent</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
