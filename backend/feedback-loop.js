@@ -35,11 +35,11 @@ async function generateImprovedPrompt(currentPrompt, transcript, conversationDat
     ).join('\n');
     
     // Create the analysis prompt for OpenAI
-    const analysisPrompt = `Your analysis prompt`;
+    const analysisPrompt = `YOUR_PROMPT_FOR_ANALYSIS`;
 
     // Call OpenAI for analysis
     const completion = await openai.chat.completions.create({
-        model: "your-model",
+        model: "YOUR_MODEL_NAME",
         messages: [
             {
                 role: "system",
