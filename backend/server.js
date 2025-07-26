@@ -191,6 +191,9 @@ app.listen(PORT, () => {
     if (!process.env.ELEVENLABS_AGENT_ID) {
         console.warn('⚠️  WARNING: ELEVENLABS_AGENT_ID not found in environment variables');
     }
+    if (!process.env.OPENAI_API_KEY) {
+        console.warn('⚠️  WARNING: OPENAI_API_KEY not found in environment variables');
+    }
 });
 
 // Graceful shutdown

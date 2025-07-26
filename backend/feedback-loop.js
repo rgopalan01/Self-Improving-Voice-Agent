@@ -3,55 +3,70 @@ const {
     getConversationDetails, 
     getCurrentAgentInfo 
 } = require('./elevenlabs-client');
+const OpenAI = require('openai');
+
+// Initialize OpenAI client
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
+});
 
 // Simple version counter (in production, you'd use a database)
 let versionCounter = 1;
 
 /**
- * Generate improved system prompt based on conversation
- * HACKERS: CUSTOMIZE THIS FUNCTION FOR YOUR HACKATHON PROJECT
+ * Generate improved system prompt based on conversation using OpenAI
+ * Analyzes slang, tone, speaking style and creates an improved system prompt
  * @param {string} currentPrompt - Current system prompt
  * @param {Array} transcript - Conversation transcript array
  * @param {Object} conversationData - Full conversation data from ElevenLabs
- * @returns {string} Improved system prompt
+ * @returns {Promise<string>} Improved system prompt
  */
-function generateImprovedPrompt(currentPrompt, transcript, conversationData) {
-    // HACKERS: This is where you implement your feedback logic!
-    // 
-    // You have access to:
-    // - currentPrompt: The current system prompt
-    // - transcript: Array of conversation messages [{role: 'user/agent', message: '...'}]
-    // - conversationData: Full conversation data (duration, metadata, etc.)
-    //
-    // Examples of what you could build:
-    // - Analyze conversation sentiment and adjust tone
-    // - Add domain-specific knowledge based on topics discussed
-    // - Modify questioning strategy based on user responses
-    // - Integrate with external LLMs (OpenAI, Claude, etc.) for prompt improvement
-    // - Add personality traits based on conversation patterns
+async function generateImprovedPrompt(currentPrompt, transcript, conversationData) {
+    console.log('🤖 Using OpenAI to analyze conversation style...');
     
-    // Remove any existing version tracking
-    let newPrompt = currentPrompt.replace(/\[Version \d+.*?\]/g, '').trim();
-    
-    // Simple example: Add version tracking and basic conversation insights
+    // Extract user messages for style analysis
     const userMessages = transcript.filter(msg => msg.role === 'user');
     const agentMessages = transcript.filter(msg => msg.role === 'agent');
     const duration = conversationData.metadata?.call_duration_secs || 0;
     
-    // Add version and basic analytics
-    newPrompt += `\n\n[Version ${versionCounter + 1}] - Improved based on conversation analysis:
-- Conversation duration: ${duration} seconds
-- User messages: ${userMessages.length}
-- Agent messages: ${agentMessages.length}
-- Last conversation ID: ${conversationData.conversation_id}`;
+    // Prepare conversation text for analysis
+    const conversationText = transcript.map(msg => 
+        `${msg.role === 'user' ? 'User' : 'Agent'}: ${msg.message}`
+    ).join('\n');
     
-    // You could add more sophisticated improvements here:
-    // - Sentiment analysis
-    // - Topic detection
-    // - Response quality assessment
-    // - User satisfaction indicators
+    // Create the analysis prompt for OpenAI
+    const analysisPrompt = `Your analysis prompt`;
+
+    // Call OpenAI for analysis
+    const completion = await openai.chat.completions.create({
+        model: "your-model",
+        messages: [
+            {
+                role: "system",
+                content: "You are an expert conversation analyst and prompt engineer. Return only the improved system prompt, nothing else."
+            },
+            {
+                role: "user",
+                content: analysisPrompt
+            }
+        ],
+        temperature: 0.7,
+        max_tokens: 2000
+    });
+
+    const improvedPrompt = completion.choices[0].message.content.trim();
     
-    return newPrompt;
+    // Add version tracking and metadata
+    const finalPrompt = improvedPrompt + `\n\n[Version ${versionCounter + 1}] - Style-adapted based on conversation analysis:
+    - Conversation duration: ${duration} seconds
+    - User messages: ${userMessages.length}
+    - Agent messages: ${agentMessages.length}
+    - Last conversation ID: ${conversationData.conversation_id}`;
+    
+    console.log('✅ OpenAI analysis completed successfully');
+    console.log(`🔄 Generated improved prompt (${finalPrompt.length} characters)`);
+    
+    return finalPrompt;
 }
 
 /**
@@ -89,7 +104,7 @@ async function processConversationFeedback(currentPrompt = null) {
         console.log(`🔧 Conversation analyzed - ${transcript.length} messages, ${userMessages.length} user, ${agentMessages.length} agent`);
         
         // Step 5: Generate improved prompt (THIS IS WHERE HACKERS CUSTOMIZE)
-        const improvedPrompt = generateImprovedPrompt(currentPrompt, transcript, conversationDetails);
+        const improvedPrompt = await generateImprovedPrompt(currentPrompt, transcript, conversationDetails);
         
         // Step 6: Increment version and return result
         versionCounter++;
