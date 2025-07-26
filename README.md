@@ -1,6 +1,6 @@
 # ElevenLabs Self-Improving Voice Agent
 
-A hackathon starter for building voice AI agents that learn and improve from every conversation using ElevenLabs Conversational AI.
+A starter for building voice AI agents that learn and improve from every conversation using ElevenLabs Conversational AI.
 
 ## Quick Start
 
